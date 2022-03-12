@@ -31,7 +31,7 @@ ai21Token = "Bearer " <> BS.strip $(embedFile "sensitive/ai21.txt")
 
 
 fillPrompt :: Text -> [(Text, Text)] -> Text
-fillPrompt = foldr (\(k, v) acc -> T.replace [i|[[#{k}]]|] v acc)
+fillPrompt = foldr (\(k, v) -> T.replace [i|[[#{k}]]|] v)
 
 completePrompt :: Text -> [(Text, Text)] -> IO Text
 completePrompt = getJ1 .! fillPrompt
