@@ -1,0 +1,29 @@
+name: omnidict
+ghc-options: -Wall
+
+dependencies:
+  - base >= 4.14 && < 5
+  - relude
+
+  # discord
+  - discord-haskell
+
+  # text
+  - bytestring
+  - text
+
+  # http
+  - aeson
+  - aeson-pretty
+  - aeson-qq
+  - lens
+  - lens-aeson
+  - wreq
+
+  # misc
+  - file-embed
+  - string-interpolate
+
+executable:
+  main: Main.hs
+  source-dirs: .

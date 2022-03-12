@@ -1,0 +1,33 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.6.
+--
+-- see: https://github.com/sol/hpack
+
+name:           omnidict
+version:        0.0.0
+build-type:     Simple
+
+executable omnidict
+  main-is: Main.hs
+  other-modules:
+      Omnidict.Language
+      Paths_omnidict
+  hs-source-dirs:
+      ./
+  ghc-options: -Wall
+  build-depends:
+      aeson
+    , aeson-pretty
+    , aeson-qq
+    , base >=4.14 && <5
+    , bytestring
+    , discord-haskell
+    , file-embed
+    , lens
+    , lens-aeson
+    , relude
+    , string-interpolate
+    , text
+    , wreq
+  default-language: Haskell2010

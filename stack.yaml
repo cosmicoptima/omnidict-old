@@ -1,0 +1,8 @@
+resolver:
+  url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/27.yaml
+packages: [.]
+extra-deps:
+  - discord-haskell-1.11.0
+  - emoji-0.1.0.2
+nix:
+  shell-file: shell.nix
