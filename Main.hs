@@ -8,7 +8,6 @@
 module Main where
 
 import           Relude
-import qualified Relude.Unsafe                 as Unsafe
 
 import           Omnidict.Language
 
@@ -19,6 +18,7 @@ import           Discord.Types
 
 import           Data.FileEmbed
 import qualified Data.Text                     as T
+import           System.Random                  ( randomIO )
 
 
 -- files
@@ -38,6 +38,9 @@ requireRight = either (die . show) pure
 voiceFilter :: Text -> Text
 voiceFilter = (<> "__**") . ("**__" <>) . T.toUpper . T.strip
 
+odds :: MonadIO m => Double -> m () -> m ()
+odds p action = liftIO randomIO >>= flip when action . (< p)
+
 
 -- discord utilities
 
@@ -55,6 +58,15 @@ post :: ChannelID -> Text -> DH Message
 post channel = call . CreateMessage channel . voiceFilter
 
 
+-- dictposting
+
+qaPost :: ChannelID -> Text -> DH ()
+qaPost channel question =
+  liftIO (completePrompt qaPrompt [("question", question)])
+    >>= void
+    .   post channel
+
+
 -- main
 
 onStart :: DH ()
@@ -66,13 +78,11 @@ onEvent = \case
     void (post (messageChannelId m) "Gaming mode activated")
 
   MessageCreate m@(T.stripPrefix "!qa " . messageContent -> Just q) ->
-    liftIO (completePrompt qaPrompt [("question", q)])
-      >>= void
-      .   post (messageChannelId m)
-      .   Unsafe.head
-      .   T.splitOn "------"
+    qaPost (messageChannelId m) q
 
-  _ -> pure ()
+  MessageCreate m -> odds 0.02 $ qaPost (messageChannelId m) (messageContent m)
+
+  _               -> pure ()
 
 main :: IO ()
 main = void $ runDiscord

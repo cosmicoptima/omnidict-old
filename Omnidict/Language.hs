@@ -9,11 +9,9 @@ module Omnidict.Language where
 import           Relude
 
 import           Control.Lens                   ( (.~)
-                                                , (^.)
                                                 , (^?)
                                                 )
 import           Data.Aeson                     ( Value )
-import           Data.Aeson.Encode.Pretty       ( encodePretty )
 import           Data.Aeson.Lens
 import           Data.Aeson.QQ
 import qualified Network.Wreq                  as HTTP
@@ -49,7 +47,7 @@ getJ1 prompt = do
       {
         "prompt": #{prompt},
         "maxTokens": 128,
-	"stopSequences": ["\n"],
+	"stopSequences": ["\n------"],
         "temperature": 1,
         "topP": 0.9,
         "presencePenalty": {"scale": 0.3}
@@ -67,7 +65,4 @@ getJ1 prompt = do
              )
   case outputMay of
     Just output -> pure output
-    Nothing     -> do
-      writeFileBS "error.json"
-                  (toStrict $ encodePretty (res ^. HTTP.responseBody))
-      fail "Could not get output"
+    Nothing     -> fail "Could not get output"

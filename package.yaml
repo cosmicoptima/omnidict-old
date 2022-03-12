@@ -14,7 +14,6 @@ dependencies:
 
   # http
   - aeson
-  - aeson-pretty
   - aeson-qq
   - lens
   - lens-aeson
@@ -22,6 +21,7 @@ dependencies:
 
   # misc
   - file-embed
+  - random
   - string-interpolate
 
 executable:
