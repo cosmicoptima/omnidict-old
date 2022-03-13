@@ -23,6 +23,9 @@ import           System.Random                  ( randomIO )
 
 -- files
 
+deathPrompt :: Text
+deathPrompt = (T.strip . decodeUtf8) $(embedFile "assets/death.prompt")
+
 qaPrompt :: Text
 qaPrompt = (T.strip . decodeUtf8) $(embedFile "assets/qa.prompt")
 
@@ -60,6 +63,10 @@ post channel = call . CreateMessage channel . voiceFilter
 
 -- dictposting
 
+deathPost :: ChannelID -> DH ()
+deathPost channel = do
+  liftIO (completePrompt deathPrompt []) >>= void . post channel
+
 qaPost :: ChannelID -> Text -> DH ()
 qaPost channel question =
   liftIO (completePrompt qaPrompt [("question", question)])
@@ -77,7 +84,10 @@ onEvent = \case
   MessageCreate m@(messageContent -> "gm") ->
     void (post (messageChannelId m) "Gaming mode activated")
 
-  MessageCreate m@(T.stripPrefix "!qa " . messageContent -> Just q) ->
+  MessageCreate m@(messageContent -> "how will i die") ->
+    deathPost (messageChannelId m)
+
+  MessageCreate m@(T.stripPrefix "dict, " . messageContent -> Just q) ->
     qaPost (messageChannelId m) q
 
   MessageCreate m -> odds 0.02 $ qaPost (messageChannelId m) (messageContent m)

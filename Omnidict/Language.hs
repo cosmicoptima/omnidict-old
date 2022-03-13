@@ -34,11 +34,11 @@ fillPrompt :: Text -> [(Text, Text)] -> Text
 fillPrompt = foldr (\(k, v) -> T.replace [i|[[#{k}]]|] v)
 
 completePrompt :: Text -> [(Text, Text)] -> IO Text
-completePrompt = getJ1 .! fillPrompt
+completePrompt = flip getJ1 "\n" .! fillPrompt
 
 
-getJ1 :: Text -> IO Text
-getJ1 prompt = do
+getJ1 :: Text -> Text -> IO Text
+getJ1 prompt stopAt = do
   res :: HTTP.Response Value <- HTTP.asJSON =<< HTTP.postWith
     (HTTP.defaults & HTTP.header "Authorization" .~ [ai21Token])
     "https://api.ai21.com/studio/v1/j1-jumbo/complete"
@@ -46,7 +46,7 @@ getJ1 prompt = do
       {
         "prompt": #{prompt},
         "maxTokens": 128,
-	"stopSequences": ["\n------"],
+	"stopSequences": [#{stopAt}],
         "temperature": 1,
         "topP": 0.9,
         "presencePenalty": {"scale": 0.3}

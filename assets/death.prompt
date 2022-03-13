@@ -1,0 +1,12 @@
+# contains a few thousand creative ways to die
+with open("ways_to_die.txt") as f:
+    ways_to_die = f.readlines()
+    assert len(ways_to_die) == 3023
+
+for cause in ways_to_die[:10]:
+    print(cause)
+# should output:
+# you will skewer yourself from asshole to mouth in a pole vaulting accident
+# the universe will forget you exist
+# you will attempt to eat a live hand grenade
+# 
